@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Insert QR Code Data</title>
+    <script src="https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.2.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore-compat.js"></script>
+    <script>
+      // Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyDsjqpuHYB8fyZh-5y5Xllr5mbUjJUMs0E",
+        authDomain: "get2025-8c176.firebaseapp.com",
+        databaseURL: "https://get2025-8c176-default-rtdb.firebaseio.com",
+        projectId: "get2025-8c176",
+        storageBucket: "get2025-8c176.firebasestorage.app",
+        messagingSenderId: "739257711895",
+        appId: "1:739257711895:web:991b11d63c86fda5b98b52",
+        measurementId: "G-Q3SVJ7ET5T",
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+
+      async function insertData() {
+        const name = document.getElementById("nameInput").value.trim();
+        const qrCode = document.getElementById("qrInput").value.trim();
+        const tpNumber = document.getElementById("tpNumberInput").value.trim();
+        const scanned = document.getElementById("scannedInput").value === "true";
+
+        if (!name || !qrCode || !tpNumber) {
+          alert("Please fill in all fields.");
+          return;
+        }
+
+        if (qrCode.length !== 13) {
+          alert("Enter correct QR code value");
+          return;
+        }
+        
+
+        try {
+          await db.collection("QrCode").doc(qrCode).set({
+            Name: name,
+            Qr: qrCode,
+            TpNumber: tpNumber,
+            scanned: scanned,
+          });
+
+          alert("Data inserted successfully!");
+          document.getElementById("dataForm").reset();
+        } catch (error) {
+          console.error("Error inserting data:", error.message);
+          alert("Error: " + error.message);
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <h2>Insert QR Code Data</h2>
+    <form id="dataForm" onsubmit="event.preventDefault(); insertData();">
+      <label for="nameInput">Name:</label><br>
+      <input type="text" id="nameInput" placeholder="Enter Name" required><br><br>
+
+      <label for="qrInput">QR Code:</label><br>
+      <input type="text" id="qrInput" placeholder="Enter QR Code" required><br><br>
+
+      <label for="tpNumberInput">TP Number:</label><br>
+      <input type="number" id="tpNumberInput" placeholder="Enter TP Number" required><br><br>
+
+      <label for="scannedInput">Scanned:</label><br>
+      <select id="scannedInput" required>
+        <option value="false" selected>False</option>
+        <option value="true">True</option>
+      </select><br><br>
+
+      <button type="submit">Insert Data</button>
+    </form>
+  </body>
+</html>
